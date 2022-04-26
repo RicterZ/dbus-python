@@ -345,6 +345,19 @@ Message_get_no_reply(Message *self, PyObject *unused UNUSED)
     return PyBool_FromLong(dbus_message_get_no_reply(self->msg));
 }
 
+PyDoc_STRVAR(Message_set_allow_interactive_authentication__doc__,
+"message.allow_interactive_authentication(bool) -> None\n"
+"Set interactive authentication to this message is required.\n");
+static PyObject *
+Message_set_allow_interactive_authentication(Message *self, PyObject *args)
+{
+    int value;
+    if (!PyArg_ParseTuple(args, "i", &value)) return NULL;
+    if (!self->msg) return DBusPy_RaiseUnusableMessage();
+    dbus_message_set_allow_interactive_authorization(self->msg, value ? TRUE : FALSE);
+    Py_RETURN_NONE;
+}
+
 PyDoc_STRVAR(Message_set_no_reply__doc__,
 "message.set_no_reply(bool) -> None\n"
 "Set whether no reply to this message is required.\n");
@@ -837,6 +850,8 @@ static PyMethodDef Message_tp_methods[] = {
       METH_NOARGS, Message_get_no_reply__doc__},
     {"set_no_reply", (PyCFunction) (void (*)(void))Message_set_no_reply,
       METH_VARARGS, Message_set_no_reply__doc__},
+    {"set_allow_interactive_authentication", (PyCFunction) (void (*)(void))Message_set_allow_interactive_authentication,
+      METH_VARARGS, Message_set_allow_interactive_authentication__doc__},
     {"get_reply_serial", (PyCFunction) (void (*)(void))Message_get_reply_serial,
       METH_NOARGS, Message_get_reply_serial__doc__},
     {"set_reply_serial", (PyCFunction) (void (*)(void))Message_set_reply_serial,
